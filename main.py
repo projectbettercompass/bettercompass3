@@ -1,36 +1,53 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect
 import requests
+from datetime import date
+
+# TODO 
+# add a function to check if the cookie is still valid
+
+
+# All user data
+session_id = '0'
+user_id = 0
+prefix = '0'
+
+logged_in = False
 
 app = Flask(__name__)
 
+# check on each requst if user is logged in. 
+@app.before_request
+def check_login():
+    global logged_in
+    if not logged_in and request.endpoint not in ['login', 'static', 'faq']:
+        return redirect('/login')
+
 @app.route('/')
 def index():
-    # Make it so when the user logs in it asks for the school prefix, ASP cookie and uid
-    url = 'https://prefix.compass.education/Services/Calendar.svc/GetCalendarEventsByUser?sessionstate=readonly'
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/114.0',
-        'Content-Type': 'application/json',
-    }
+    # fetch classes for the current day
+    try:
+        response = requests.post(
+            f'https://{prefix}.compass.education/Services/Calendar.svc/GetCalendarEventsByUser?sessionstate=readonly',
+            headers={
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/114.0',
+                'Content-Type': 'application/json',
+            }, 
+            cookies={
+                'ASP.NET_SessionId': session_id
+            }, 
+            json={
+                "userId": user_id,
+                "startDate": str(date.today()), # YYYY-MM-DD
+                "endDate": str(date.today()), 
+                "start": 0,
+        }).json()['d']
 
-    # Put your user id in the "userId" value
-    # You can change the date of the calendar view here
-    data = {
-        "userId": "1",
-        "startDate": "2023-11-27",
-        "endDate": "2023-11-27",
-        "start": 0,
-        # also if u can make it automatically show the data for the current day that would be great
-    }
-
-    # Put your session key here
-    cookies = {
-        'ASP.NET_SessionId': ''
-    }
-
-    response = requests.post(url, headers=headers, cookies=cookies, json=data)
-    sessions = response.json()['d']
-
-    return render_template('index.html', sessions=sessions)
+        # Sort classes by start time
+        sorted_events = sorted(response, key=lambda x: x['start']) 
+    except:
+        print("error in class fetch")
+        sorted_events = []
+    return render_template('index.html', sessions=sorted_events)
 
 
 @app.route('/faq')  # New route for /faq
@@ -39,56 +56,40 @@ def faq():
 
 @app.route('/news')
 def news():
-    url = 'https://prefix.compass.education/Services/NewsFeed.svc/GetMyNewsFeedPaged?sessionstate=readonly'
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/114.0',
-        'Content-Type': 'application/json',
-    }
-
-    # Put your session key here
-    cookies = {
-        'ASP.NET_SessionId': ''
-    }
-
-    # Data to be included in the request payload
-    data = {
-        "userId": 1,
-        "limit": 10,
-        "start": 0,
-    }
-
-    response = requests.post(url, headers=headers, cookies=cookies, json=data)
-
     try:
-        # Try to access the expected structure
-        news_data = response.json()['d']['data']
-    except KeyError:
-        # If the expected structure is not found, handle it accordingly
+        news_data = requests.post(
+            f'https://{prefix}.compass.education/Services/NewsFeed.svc/GetMyNewsFeedPaged?sessionstate=readonly',
+            headers={
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/114.0',
+                'Content-Type': 'application/json',
+            }, 
+            cookies={
+                'ASP.NET_SessionId': session_id
+            }, 
+            json={
+                "userId": user_id,
+        }).json()['d']
+    except:
+        print("error in class fetch")
         news_data = []
 
     return render_template('news.html', news_data=news_data)
 
 @app.route('/staff')
 def staff():
-    url = 'https://prefix.compass.education/Services/User.svc/GetAllStaff'
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/114.0',
-        'Content-Type': 'application/json',
-    }
 
-    # Put your session key here
-    cookies = {
-        'ASP.NET_SessionId': ''
-    }
-
-    # Data to be included in the request payload
-    data = {
-        "userId": 1,
-        "limit": 10,
-        "start": 0,
-    }
-
-    response = requests.post(url, headers=headers, cookies=cookies, json=data)
+    response = requests.post(
+        f'https://{prefix}.compass.education/Services/User.svc/GetAllStaff',
+        headers={
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/114.0',
+            'Content-Type': 'application/json',
+        }, cookies={
+            'ASP.NET_SessionId': session_id
+        },
+        json={
+            "userId": user_id,
+        }
+    )
 
     try:
         # Try to access the expected structure
@@ -98,6 +99,22 @@ def staff():
         staff_data = []
 
     return render_template('staff.html', staff_data=staff_data)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        # global session_id, prefix, user_id
+        global logged_in
+        session_id = request.form['session_id']
+        prefix = request.form['school_prefix']
+        user_id = request.form['user_id']
+        logged_in = True
+
+        print(session_id, prefix, user_id)
+        return redirect('/')
+
+    return render_template('login.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
