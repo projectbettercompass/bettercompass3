@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>BetterCompass</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/luxon@2.0.1/build/global/luxon.min.js"></script>
     <style>
         body {
             background-color: black; /* Dark background color */
@@ -68,14 +69,14 @@
             <li class="nav-item">
                 <a class="nav-link" href="/news">News</a>
             </li>
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="/staff">Staff</a> <!-- Add staff link -->
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="/tasks">Tasks</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/faq">FAQ</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/tasks">Tasks</a>
             </li>
         </ul>
     </div>
@@ -97,7 +98,7 @@
                 <tr>
                     <td>{{ task['activityName'] }}</td>
                     <td>{{ task['name'] }}</td>
-                    <td>{{ task['dueDateTimestamp'] }}</td>
+                    <td class="dueDateTimestamp">{{ task['dueDateTimestamp'] }}</td>
 
                     {% if task['students'][0]['submissionStatus'] == 1%}
                         <td class="overdue">Todo</td>
@@ -112,7 +113,18 @@
         </tbody>
     </table>
 </div>
-
+<script>
+    // Format date using Luxon.js
+    document.addEventListener('DOMContentLoaded', function () {
+        var postDatetimeElements = document.querySelectorAll('.dueDateTimestamp');
+        
+        postDatetimeElements.forEach(function (element) {
+            var originalDatetime = element.textContent;
+            var formattedDatetime = luxon.DateTime.fromISO(originalDatetime).toFormat('dd LLL yyyy HH:mm');
+            element.textContent = formattedDatetime;
+        });
+    });
+</script>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
