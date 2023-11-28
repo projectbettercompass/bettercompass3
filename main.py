@@ -12,7 +12,7 @@ start_time = datetime.now()
 # All user data
 session_id = '0'
 user_id = 0
-prefix = '0-0'
+prefix = '0'
 
 logged_in = True
 
@@ -145,11 +145,12 @@ def tasks():
     try:
         # Try to access the expected structure
         tasks = response.json()['d']['data']
+        sorted_tasks = sorted(tasks, key=lambda x: x['students'][0]['submissionStatus'])
     except KeyError:
         # If the expected structure is not found, handle it accordingly
-        tasks = []
+        sorted_tasks = []
 
-    return render_template('tasks.html', tasks=tasks)
+    return render_template('tasks.html', tasks=sorted_tasks)
 
 
 @app.route('/login', methods=['GET', 'POST'])
