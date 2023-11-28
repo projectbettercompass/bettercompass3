@@ -1,9 +1,12 @@
 from flask import Flask, render_template, request, redirect
 import requests
 from datetime import date
+from datetime import datetime
+start_time = datetime.now()
+
 
 # TODO 
-# add a function to check if the cookie is still valid
+# add a function to check if the cookie is still valid if not make it redirect to login page
 
 
 # All user data
@@ -53,6 +56,20 @@ def index():
 @app.route('/faq')  # New route for /faq
 def faq():
     return render_template('faq.html')
+
+@app.route('/howto')  # New route for /howto
+def howto():
+    return render_template('howto.html')
+
+@app.route('/about')
+def about():
+    return render_template('about.html', uptime=calculate_uptime())
+
+# Function to calculate the uptime in seconds
+def calculate_uptime():
+    current_time = datetime.now()
+    uptime = current_time - start_time
+    return uptime.total_seconds()
 
 @app.route('/news')
 def news():
