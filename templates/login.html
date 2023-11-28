@@ -25,19 +25,27 @@
         h1 {
             margin-bottom: 20px;
         }
+        input {
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
     </style>
 </head>
 <body>
     {% include 'header.html' %}
-
     <div class="container mt-5">
-        <h1 class="text-center">Login</h1>
-            <form method="post">
-                <input name="session_id" type="text" class="form-control" placeholder="session_id">
-                <input name="user_id" type="text" class="form-control" placeholder="user_id">
-                <input name="school_prefix" type="text" class="form-control" placeholder="school_prefix">
-                <input name="session_id" type="submit" class="btn btn-primary" value="login">
-            </form>
+        <h1 class="text-center">Login to <a style="font-weight: bold; color: #007bff;">BetterCompass</a></h1>
+        <p class="text-center">To proceed with using BetterCompass, we need to gather a few details from you!</p>
+        <center>
+        <form method="post">
+                <input name="session_id" type="text" class="form-control" placeholder="Session ID">
+                <input name="user_id" type="text" class="form-control" placeholder="User ID">
+                <input name="school_prefix" type="text" class="form-control" placeholder="School Prefix">
+                <input name="session_id" type="submit" class="btn btn-primary" value="Login to BetterCompass">
+                <br>
+                <a href="/howto"><p class="text-center" style="font-weight: bold; font-size: 10px;">Don't know how to get this info?</p></a>
+        </form>
+    </center>
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>

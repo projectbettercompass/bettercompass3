@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BetterCompass</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: black; /* Dark background color */
+            color: #ffffff; /* Light text color */
+        }
+        .navbar {
+            background-color: #007bff;  /* Blue navbar color */
+            border-color: #161818;
+            border-radius: 5px;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ffffff;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: #ffffff;
+        }
+        .card {
+            background-color: #353a3f;
+            color: #ffffff;
+            border-color: #161818;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <a class="navbar-brand mb-0 h1" href="#">BetterCompass³</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/faq">FAQ</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="container mt-3">
+    <h1>How can I obtain the information required to log in?</h1>
+    <br>
+    <div class="card">
+        <div class="card-body">
+          <h6 class="card-subtitle mb-2 text-muted">Step 1: Session ID</h6>
+          <p class="card-text">Login to compass on a desktop device's web browser. Once you have logged in right click with your mouse and then click inspect element. </p>
+          <img src="https://i.ibb.co/BCVhj6c/vQesX7d.png" alt="Inspect" width="200px">
+          <p class="card-text">Click on the Application tab and then click on Cookies. You should see a cookie called <code>ASP.NET_SessionId</code>. Copy the value of this cookie. You may need to click on the 2 arrows icon to get to Application.</p>
+          <img src="https://i.ibb.co/ZBb8HF1/MhMSe4m.png">
+          <img src="https://i.ibb.co/N6c3gyB/tasu77Y.png">
+          <p class="card-text">Once you have clicked on <code>Application</code> > <cocde>Cookies</cocde> > <code>yourschool.compass.education</code> find the cookie called <code>ASP.NET_SessionId</code> then copy and paste it's value.</p>
+          <img src="https://i.ibb.co/SmhrPNx/nIgVt5H.png">
+          <br><br>
+          <p style="font-size: x-small;">Compass has, unfortunately, made some changes to how Session IDs work for better security practices. Session IDs now expire approximately every 24 hours, which means you will need to complete this step daily. We are working on finding a way to address this; please give us some time.</p>
+        </div>
+      </div>
+      <br>
+      <div class="card">
+        <div class="card-body">
+          <h6 class="card-subtitle mb-2 text-muted">Step 2: User ID</h6>
+          <p class="card-text">To get the userId, go to SyncMySchedule ( gear icon top right in compass homepage ). Then find the url used to sync the schedule, there should be a parameter called "uid" and a string of digit value in the url (4 or 3). The digits are your userId.</p>
+        </div>
+      </div>
+      <br>
+      <div class="card">
+        <div class="card-body">
+          <h6 class="card-subtitle mb-2 text-muted">Step 3: School Prefix</h6>
+          <p class="card-text">This step is the easiest! Simply just copy and paste the prefic before <code>.compass.education</code> for example if my Compass URL is <code>ambatukam-vic.compass.education</code>, I would paste <code>ambatukam-vic</code> in the input field.</p>
+          <img src="https://i.ibb.co/C8txnvF/xpbHp5l.png">
+        </div>
+      </div>
+</div>
+
+</body>
+</html>
