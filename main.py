@@ -69,9 +69,11 @@ def news():
             json={
                 "userId": user_id,
                 "start": 0,
-        }).json()['d']['data']
-    except:
-        print("error in class fetch")
+                "limit": 10,
+            }
+        ).json()['d']['data']
+    except Exception as e:
+        print(f"Error in fetching news: {e}")
         news_data = []
 
     return render_template('news.html', news_data=news_data)
