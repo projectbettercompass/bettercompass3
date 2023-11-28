@@ -37,31 +37,16 @@
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark">
-    <a class="navbar-brand mb-0 h1" href="#">BetterCompass³</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" href="/">Home</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/faq">FAQ</a>
-            </li>
-        </ul>
-    </div>
-</nav>
+{% include 'header.html' %}
 <div class="container mt-3">
     <center>
     <h1 style="color: #007bff; font-weight: bold; font-size: 50px;">BetterCompass³</h1>
     <h4 style="color: #ffffff; font-size: 20px;">BetterCompass is a lightweight, fast and easy-to-use frontend client for JDLF's Compass.Education school manager.</h4>
     <br>
     <h5 class="subtitle" style="color: #ffffff; font-size: 25px;">About:</h5>
-    <p>Author: Mapler</p>
-    <p>With help from: reactoimpact</p>
-    <p>Version: 3.0.0</p>
+    <p>Made by: Mapler</p>
+    <p>With help from: <a href="https://reacto.dev/">reactoimpact</a></p>
+    <p>Version: DEV 3.0.0</p>
     <p>Tech: Python &#40;Flask server&#41;, HTML</p>
     <p>Uptime: {{uptime}} seconds</p>
     </center>
