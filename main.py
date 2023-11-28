@@ -9,9 +9,9 @@ from datetime import date
 # All user data
 session_id = '0'
 user_id = 0
-prefix = '0'
+prefix = '0-0'
 
-logged_in = False
+logged_in = True
 
 app = Flask(__name__)
 
@@ -68,7 +68,8 @@ def news():
             }, 
             json={
                 "userId": user_id,
-        }).json()['d']
+                "start": 0,
+        }).json()['d']['data']
     except:
         print("error in class fetch")
         news_data = []
@@ -99,6 +100,38 @@ def staff():
         staff_data = []
 
     return render_template('staff.html', staff_data=staff_data)
+
+
+@app.route('/tasks')
+def tasks():
+
+    response = requests.post(
+        f'https://{prefix}.compass.education/Services/LearningTasks.svc/GetAllLearningTasksByUserId?sessionstate=readonly',
+        headers={
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/114.0',
+            'Content-Type': 'application/json',
+        }, cookies={
+            'ASP.NET_SessionId': session_id
+        },
+        json={
+            "userId": user_id,
+            "forceTaskId": 0, 
+            "showHiddenTasks": False, 
+            "page": 1, 
+            "start": 0, 
+            "limit": 100, 
+        }
+    )
+
+    try:
+        # Try to access the expected structure
+        tasks = response.json()['d']['data']
+    except KeyError:
+        # If the expected structure is not found, handle it accordingly
+        tasks = []
+
+    return render_template('tasks.html', tasks=tasks)
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

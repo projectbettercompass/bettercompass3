@@ -39,6 +39,18 @@
             color: #ffffff;
             border-color: #161818;
         }
+
+        .todo {
+            background-color: #8d0000;
+        }
+
+        .submitted {
+            background-color: #00b100;
+        }
+
+        .overdue {
+            background-color: #aeb100;
+        }
     </style>
 </head>
 <body>
@@ -70,23 +82,31 @@
 </nav>
 
 <div class="container mt-3">
-    <h1>Staff Data</h1>
+    <h1>Task Data</h1>
     <table class="table table-dark">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Display Code</th>
-                <th>Start Date</th>
+                <th>class</th>
+                <th>Task</th>
+                <th>Due Date</th>
+                <th>Submited</th>
             </tr>
         </thead>
         <tbody>
-            {% for staff_member in staff_data %}
+            {% for task in tasks %}
                 <tr>
-                    <td>{{ staff_member['id'] }}</td>
-                    <td>{{ staff_member['n'] }}</td>
-                    <td>{{ staff_member['displayCode'] }}</td>
-                    <td>{{ staff_member['start'] }}</td>
+                    <td>{{ task['activityName'] }}</td>
+                    <td>{{ task['name'] }}</td>
+                    <td>{{ task['dueDateTimestamp'] }}</td>
+
+                    {% if task['students'][0]['submissionStatus'] == 1%}
+                        <td class="overdue">Todo</td>
+                    {% elif task['students'][0]['submissionStatus'] == 2%}
+                        <td class="todo">Overdue</td>
+                    {% else %}
+                        <td class="submitted">Done</td>
+                    {% endif %}
+                    
                 </tr>
             {% endfor %}
         </tbody>
