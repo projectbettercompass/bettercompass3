@@ -3,6 +3,7 @@ import requests
 from datetime import date
 from datetime import datetime
 start_time = datetime.now()
+import creds
 
 
 # TODO 
@@ -14,7 +15,14 @@ session_id = '0'
 user_id = 0
 prefix = '0'
 
-logged_in = True
+logged_in = False
+debug = True
+
+if debug:   
+    session_id = creds.session_id
+    user_id = creds.user_id
+    prefix = creds.prefix
+    logged_in = True
 
 app = Flask(__name__)
 
