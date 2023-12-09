@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BetterCompass</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cabin&display=swap');
+        
+        body {
+          background: #E6F2FE;;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          margin: 0;
+        }
+        .container {
+          display: flex;
+          flex-direction: column;
+          border-radius: 12px;
+          background: #FFF;
+          box-shadow: -24px 20px 0px 0px rgba(0, 0, 0, 0.25);
+
+          width: 601px;
+          height: 708px;
+          margin: auto;
+          padding: 48px;
+
+          align-items: center;
+          justify-content: space-around;
+        }
+
+
+        .logo {
+          width: 139px;
+          height: 199px;
+          flex-shrink: 0;
+        }
+
+        .title {
+          color: #303030;
+          text-align: center;
+          font-family: Cabin;
+          font-size: 36px;
+          font-style: normal;
+          font-weight: 500;
+          line-height: normal;
+        }
+
+        .btn {
+          border-radius: 8px;
+          background: #F6991C;
+
+          width: 480px;
+          height: 68px;
+          flex-shrink: 0;
+
+          color: #FFF;
+          text-align: center;
+          font-family: Cabin;
+          font-size: 24px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal;
+        }
+
+        .text {
+          color: #303030;
+          text-align: center;
+          font-family: Cabin;
+          font-size: 24px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal;
+        }
+
+        .bar {
+          width: 208px;
+          height: 2px;
+          background: #7F8796;
+        }
+
+        .or {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-top: 24px;
+          margin-bottom: 24px;
+        }
+
+        .link {
+          color: #0E6CD9;
+          text-align: center;
+          font-family: Cabin;
+          font-size: 24px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal;
+          text-decoration-line: underline;
+        }
+
+    </style>
+</head>
+<script>
+  window.onload = function() {
+    document.querySelector(".btn").addEventListener("click", function() {
+      alert("Logging In...");
+      // window.location.href = "/index.html";
+    });
+    document.querySelector(".btn-manual").addEventListener("click", function() {
+      window.location.href = "/login.html";
+    });
+  }
+</script>
+<body>
+
+  <div class="container">
+    <img src="static\logo.png" class="logo">
+    <h1 class="title">Better Compass</h1>
+    <button type="button" class="btn">
+      Sign in with SSO
+    </button>
+    <div class="or">
+      <div class="bar"></div>
+      <p class=text>or</p>
+      <div class="bar"></div>
+    </div>
+    <p class = text><a href="/about" class="link">About</a> - <a href="/legal" class="link">legal notice</a> - <a href="/contact" class="link">contact</a> - <a href="/login" class="link">Manual Login</a></p>
+  </div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

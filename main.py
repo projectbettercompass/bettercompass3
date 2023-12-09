@@ -4,6 +4,7 @@ from datetime import date
 from datetime import datetime
 start_time = datetime.now()
 import creds
+import re
 
 
 # TODO 
@@ -16,7 +17,7 @@ user_id = 0
 prefix = '0'
 
 logged_in = False
-debug = True
+debug = False
 
 if debug:   
     session_id = creds.session_id
@@ -30,8 +31,9 @@ app = Flask(__name__)
 @app.before_request
 def check_login():
     global logged_in
-    if not logged_in and request.endpoint not in ['login', 'static', 'faq']:
-        return redirect('/login')
+    # Pages user is allowed to view when not logged in
+    if not logged_in and request.endpoint not in ['login', 'static', 'faq', 'mainLogin', 'howto']:
+        return redirect('/mainLogin')
 
 @app.route('/')
 def index():
@@ -53,12 +55,28 @@ def index():
                 "start": 0,
         }).json()['d']
 
+
+        user = requests.post(
+            f'https://{prefix}.compass.education/Services/User.svc/GetUserDetailsBlobByUserId',
+            headers={
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/114.0',
+                'Content-Type': 'application/json',
+            }, 
+            cookies={
+                'ASP.NET_SessionId': session_id
+            }, 
+            json={
+                "userId": user_id,
+                "targetUserId": user_id,
+        }).json()['d']
+
         # Sort classes by start time
         sorted_events = sorted(response, key=lambda x: x['start']) 
     except:
         print("error in class fetch")
         sorted_events = []
-    return render_template('index.html', sessions=sorted_events)
+        user = []
+    return render_template('index.html', sessions=sorted_events, user=user)
 
 
 @app.route('/faq')  # New route for /faq
@@ -164,11 +182,29 @@ def tasks():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        # global session_id, prefix, user_id
+        global session_id, prefix, user_id
         global logged_in
         session_id = request.form['session_id']
         prefix = request.form['school_prefix']
-        user_id = request.form['user_id']
+
+        data = requests.get(
+            f'https://{prefix}.compass.education/Records/User.aspx',
+            headers={
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/114.0',
+                'Content-Type': 'application/json',
+            }, 
+            cookies={
+                'ASP.NET_SessionId': session_id
+            }, 
+            json={
+            }
+        ).text
+
+        match = re.search(r'targetUserId: (\w+),', data)
+
+        if match:
+            user_id = int(match.group(1))
+
         logged_in = True
 
         print(session_id, prefix, user_id)
@@ -176,6 +212,10 @@ def login():
 
     return render_template('login.html')
 
+@app.route('/mainLogin')
+def mainLogin():
+    return render_template('mainLogin.html')
+ 
 
 if __name__ == '__main__':
     app.run(debug=True)
