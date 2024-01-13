@@ -54,7 +54,7 @@
                 <th>Photo</th>
                 <th>Name</th>
                 <th>Display Code</th>
-                <th>Start Date</th>
+                <th>Registration Date</th>
             </tr>
         </thead>
         <tbody>
@@ -63,17 +63,35 @@
                     <td>{{ staff_member['id'] }}</td>
                     <td>
                         <div style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden;">
-                            <img src="https://phs-vic.compass.education/download/cdn/full/{{ staff_member['pv'] }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            <img src="https://{{ prefix }}.compass.education/download/cdn/full/{{ staff_member['pv'] }}" style="width: 100%; height: 100%; object-fit: cover;">
                         </div>
                     </td>
                     <td>{{ staff_member['n'] }}</td>
                     <td>{{ staff_member['displayCode'] }}</td>
-                    <td>{{ staff_member['start'] }}</td>
+                    <td data-date="{{ staff_member['start'] }}"></td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var dateCells = document.querySelectorAll("td[data-date]");
+
+        dateCells.forEach(function (cell) {
+            var rawDate = cell.getAttribute("data-date");
+            var formattedDate = formatDate(rawDate);
+            cell.textContent = formattedDate;
+        });
+
+        function formatDate(rawDate) {
+            var options = { day: '2-digit', month: 'short', year: 'numeric' };
+            var date = new Date(rawDate);
+            return date.toLocaleDateString('en-US', options);
+        }
+    });
+</script>
+
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>

@@ -9,23 +9,27 @@
         body {
             background-color: black; /* Dark background color */
             color: #ffffff; /* Light text color */
+            font-family: 'Arial', sans-serif; /* Change the font family */
         }
         .navbar {
             background-color: #007bff;  /* Blue navbar color */
             border-radius: 5px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Add a drop shadow */
         }
         .navbar-brand, .navbar-nav .nav-link {
             color: #ffffff;
+            font-weight: bold; /* Make the font bold */
         }
         .navbar-brand:hover, .navbar-nav .nav-link:hover {
             color: #ffffff;
+            text-decoration: underline; /* Add underline on hover */
         }
     </style>
     <link rel="icon" type="image/x-icon" href="static\logo.png">
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark">
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
     <a class="navbar-brand mb-0 h1" href="#">BetterCompass³</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -42,18 +46,30 @@
                 <a class="nav-link" href="/staff">Staff</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/faq">FAQ</a>
+                <a class="nav-link" href="/tasks">Tasks</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/tasks">Tasks</a>
+                <a class="nav-link" href="/reports">Reports</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="/settings">Settings</a>
+                    <a class="dropdown-item" href="/faq" style="border-bottom: 1px solid #dee2e6;">FAQ</a>
+                    <a class="dropdown-item" href="/about">About</a>
+                    <a class="dropdown-item" href="/changelog">Changelog</a>
+                </div>
             </li>
         </ul>
     </div>
 </nav>
+<br><br>
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
 
 <script>
     // Get the current URL
@@ -67,5 +83,15 @@
         }
     });
 </script>
+<script>
+    document.addEventListener('keydown', function(event) {
+        // Check if Ctrl key is pressed and the period key is pressed
+        if (event.ctrlKey && event.key === '.') {
+            // Redirect to the specified URL (https://google.com/)
+            window.location.href = 'https://compass.education/';
+        }
+    });
+</script>
+
 </body>
 </html>

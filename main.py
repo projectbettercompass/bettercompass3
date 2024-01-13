@@ -1,15 +1,18 @@
 from flask import Flask, render_template, request, redirect
 import requests
-from datetime import date
-from datetime import datetime
+from datetime import date, datetime
 start_time = datetime.now()
 import creds
 import re
+import json
 
 
 # TODO 
 # add a function to check if the cookie is still valid if not make it redirect to login page
+# create a browser extention to automate the cookie process
 
+# Bugs
+# more dropdown dosent work when in subpage
 
 # All user data
 session_id = '0'
@@ -17,7 +20,7 @@ user_id = 0
 prefix = '0'
 
 logged_in = False
-debug = False
+debug = True
 
 if debug:   
     session_id = creds.session_id
@@ -51,7 +54,7 @@ def index():
             json={
                 "userId": user_id,
                 "startDate": str(date.today()), # YYYY-MM-DD
-                "endDate": str(date.today()), 
+                "endDate": str(date.today()), # YYYY-MM-DD
                 "start": 0,
         }).json()['d']
 
@@ -121,6 +124,56 @@ def news():
 
     return render_template('news.html', news_data=news_data)
 
+@app.route('/reports')
+def get_reports():
+    try:
+        reports = []
+
+        # fetch the report list with the name and id
+        data = requests.post(
+            f'https://{creds.prefix}.compass.education/Services/Reports.svc/GetMyReportsList',
+            headers={
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/114.0',
+            }, 
+            cookies={
+                'ASP.NET_SessionId': creds.session_id
+            }, 
+            json={
+                "userId": creds.user_id,
+            }
+        ).json()
+
+
+        # use the id's to get the url for the report, then append it to an array.
+        for report in data['d']:
+            url = requests.post(
+                f'https://{creds.prefix}.compass.education/Services/LongRunningFileRequest.svc/QueueTask',
+                headers={
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/114.0',
+                }, 
+                cookies={
+                    'ASP.NET_SessionId': creds.session_id
+                }, 
+                json={
+                    "type": "9",
+                    "parameters": json.dumps({
+                        "cycleId": report['cycleId'],
+                        "schoolId": report['schoolId'],
+                        "userId": report['userIdForSchool']
+                    })
+                }
+            ).json()
+
+            reports.append({
+                'desc': report['t'],
+                'url': f"https://{creds.prefix}.compass.education/Services/Reports/Download?cycleId={report['cycleId']}&schoolId={report['schoolId']}&userId={report['userIdForSchool']}&generationSessionId={url['d']}"
+            })
+    except:
+        print("error in report fetch") 
+
+    # Render the reports.html template with the response content
+    return render_template('reports.html', reports=reports)
+
 @app.route('/staff')
 def staff():
 
@@ -144,7 +197,7 @@ def staff():
         # If the expected structure is not found, handle it accordingly
         staff_data = []
 
-    return render_template('staff.html', staff_data=staff_data)
+    return render_template('staff.html', staff_data=staff_data, prefix=prefix)
 
 
 @app.route('/tasks')
