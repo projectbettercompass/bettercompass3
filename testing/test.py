@@ -1,5 +1,5 @@
 import requests
-import creds
+import testing.creds as creds
 import json
 
 

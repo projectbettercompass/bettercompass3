@@ -1,46 +1,37 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, make_response
 import requests
 from datetime import date, datetime
 start_time = datetime.now()
-import creds
 import re
 import json
 
+# Function to calculate the uptime in seconds
+def calculate_uptime():
+    current_time = datetime.now()
+    uptime = current_time - start_time
+    return uptime.total_seconds()
 
-# TODO 
-# add a function to check if the cookie is still valid if not make it redirect to login page
+
+# TODO  
 # create a browser extention to automate the cookie process
 
 # Bugs
 # more dropdown dosent work when in subpage
 
-# All user data
-session_id = '0'
-user_id = 0
-prefix = '0'
-
-logged_in = False
-debug = True
-
-if debug:   
-    session_id = creds.session_id
-    user_id = creds.user_id
-    prefix = creds.prefix
-    logged_in = True
-
 app = Flask(__name__)
 
-# check on each requst if user is logged in. 
-@app.before_request
-def check_login():
-    global logged_in
-    # Pages user is allowed to view when not logged in
-    if not logged_in and request.endpoint not in ['login', 'static', 'faq', 'mainLogin', 'howto']:
-        return redirect('/mainLogin')
 
 @app.route('/')
 def index():
     # fetch classes for the current day
+
+    session_id = request.cookies.get('session_id')
+    prefix = request.cookies.get('prefix')
+    user_id = request.cookies.get('user_id')
+
+    if session_id is None or prefix is None or user_id is None:
+        return make_response(redirect('/login'))
+
     try:
         response = requests.post(
             f'https://{prefix}.compass.education/Services/Calendar.svc/GetCalendarEventsByUser?sessionstate=readonly',
@@ -81,7 +72,6 @@ def index():
         user = []
     return render_template('index.html', sessions=sorted_events, user=user)
 
-
 @app.route('/faq')  # New route for /faq
 def faq():
     return render_template('faq.html')
@@ -94,14 +84,15 @@ def howto():
 def about():
     return render_template('about.html', uptime=calculate_uptime())
 
-# Function to calculate the uptime in seconds
-def calculate_uptime():
-    current_time = datetime.now()
-    uptime = current_time - start_time
-    return uptime.total_seconds()
-
 @app.route('/news')
 def news():
+    session_id = request.cookies.get('session_id')
+    prefix = request.cookies.get('prefix')
+    user_id = request.cookies.get('user_id')
+
+    if session_id is None or prefix is None or user_id is None:
+        return make_response(redirect('/login'))
+
     try:
         news_data = requests.post(
             f'https://{prefix}.compass.education/Services/NewsFeed.svc/GetMyNewsFeedPaged?sessionstate=readonly',
@@ -125,21 +116,28 @@ def news():
     return render_template('news.html', news_data=news_data)
 
 @app.route('/reports')
-def get_reports():
+def get_reports(): 
+    session_id = request.cookies.get('session_id')
+    prefix = request.cookies.get('prefix')
+    user_id = request.cookies.get('user_id')
+
+    if session_id is None or prefix is None or user_id is None:
+        return make_response(redirect('/login'))
+
     try:
         reports = []
 
         # fetch the report list with the name and id
         data = requests.post(
-            f'https://{creds.prefix}.compass.education/Services/Reports.svc/GetMyReportsList',
+            f'https://{prefix}.compass.education/Services/Reports.svc/GetMyReportsList',
             headers={
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/114.0',
             }, 
             cookies={
-                'ASP.NET_SessionId': creds.session_id
+                'ASP.NET_SessionId': session_id
             }, 
             json={
-                "userId": creds.user_id,
+                "userId": user_id,
             }
         ).json()
 
@@ -147,12 +145,12 @@ def get_reports():
         # use the id's to get the url for the report, then append it to an array.
         for report in data['d']:
             url = requests.post(
-                f'https://{creds.prefix}.compass.education/Services/LongRunningFileRequest.svc/QueueTask',
+                f'https://{prefix}.compass.education/Services/LongRunningFileRequest.svc/QueueTask',
                 headers={
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/114.0',
                 }, 
                 cookies={
-                    'ASP.NET_SessionId': creds.session_id
+                    'ASP.NET_SessionId': session_id
                 }, 
                 json={
                     "type": "9",
@@ -166,7 +164,7 @@ def get_reports():
 
             reports.append({
                 'desc': report['t'],
-                'url': f"https://{creds.prefix}.compass.education/Services/Reports/Download?cycleId={report['cycleId']}&schoolId={report['schoolId']}&userId={report['userIdForSchool']}&generationSessionId={url['d']}"
+                'url': f"https://{prefix}.compass.education/Services/Reports/Download?cycleId={report['cycleId']}&schoolId={report['schoolId']}&userId={report['userIdForSchool']}&generationSessionId={url['d']}"
             })
     except:
         print("error in report fetch") 
@@ -176,6 +174,13 @@ def get_reports():
 
 @app.route('/staff')
 def staff():
+
+    session_id = request.cookies.get('session_id')
+    prefix = request.cookies.get('prefix')
+    user_id = request.cookies.get('user_id')
+
+    if session_id is None or prefix is None or user_id is None:
+        return make_response(redirect('/login'))
 
     response = requests.post(
         f'https://{prefix}.compass.education/Services/User.svc/GetAllStaff',
@@ -199,9 +204,15 @@ def staff():
 
     return render_template('staff.html', staff_data=staff_data, prefix=prefix)
 
-
 @app.route('/tasks')
 def tasks():
+
+    session_id = request.cookies.get('session_id')
+    prefix = request.cookies.get('prefix')
+    user_id = request.cookies.get('user_id')
+
+    if session_id is None or prefix is None or user_id is None:
+        return make_response(redirect('/login'))
 
     response = requests.post(
         f'https://{prefix}.compass.education/Services/LearningTasks.svc/GetAllLearningTasksByUserId?sessionstate=readonly',
@@ -231,12 +242,9 @@ def tasks():
 
     return render_template('tasks.html', tasks=sorted_tasks)
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        global session_id, prefix, user_id
-        global logged_in
         session_id = request.form['session_id']
         prefix = request.form['school_prefix']
 
@@ -258,10 +266,13 @@ def login():
         if match:
             user_id = int(match.group(1))
 
-        logged_in = True
+        # Set a cookie on the browser end
+        response = make_response(redirect('/'))
+        response.set_cookie('user_id', str(user_id), max_age=31536000)  # 1 year 
+        response.set_cookie('session_id', str(session_id), max_age=60*60*24)  # 1 day
+        response.set_cookie('prefix', str(prefix), max_age=31536000)  # 1 year 
 
-        print(session_id, prefix, user_id)
-        return redirect('/')
+        return response
 
     return render_template('login.html')
 
