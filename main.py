@@ -36,7 +36,7 @@ def check_login():
     global logged_in
     # Pages user is allowed to view when not logged in
     if not logged_in and request.endpoint not in ['login', 'static', 'faq', 'mainLogin', 'howto']:
-        return redirect('/mainLogin')
+        return redirect('/login')
 
 @app.route('/')
 def index():
